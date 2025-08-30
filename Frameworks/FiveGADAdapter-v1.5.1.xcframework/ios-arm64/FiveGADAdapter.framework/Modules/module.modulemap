@@ -1,0 +1,6 @@
+framework module FiveGADAdapter {
+  umbrella header "FiveGADAdapter.h"
+  export *
+
+  module * { export * }
+}
