@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "FiveAdWrapper",
     platforms: [
-        .iOS(.v13),
+        .iOS(.v15),
     ],
     products: [
         .library(name: "FiveAdWrapper", targets: ["FiveAdWrapper"]),
@@ -33,11 +33,11 @@ let package = Package(
         ),
         .binaryTarget(
             name: "FiveAd",
-            path: "Frameworks/FiveAd-20250825.xcframework"
+            path: "Frameworks/FiveAd-202511109.xcframework"
         ),
         .binaryTarget(
             name: "FiveGADAdapter",
-            path: "Frameworks/FiveGADAdapter-v1.5.1.xcframework"
+            path: "Frameworks/FiveGADAdapter.xcframework"
         )
     ]
 )
