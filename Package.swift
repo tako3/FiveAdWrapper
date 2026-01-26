@@ -33,7 +33,7 @@ let package = Package(
         ),
         .binaryTarget(
             name: "FiveAd",
-            path: "Frameworks/FiveAd-202511109.xcframework"
+            path: "Frameworks/FiveAd-v3.0.xcframework"
         ),
         .binaryTarget(
             name: "FiveGADAdapter",

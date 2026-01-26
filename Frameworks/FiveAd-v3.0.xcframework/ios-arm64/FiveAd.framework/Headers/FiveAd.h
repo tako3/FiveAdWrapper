@@ -9,7 +9,6 @@
 
 @protocol FADAdInterface;
 @protocol FADLoadDelegate;
-@protocol FADAdViewEventListener;
 
 @protocol FADInterstitialEventListener;
 @protocol FADCustomLayoutEventListener;
@@ -48,26 +47,6 @@ static const FADErrorCode kFADErrorContentUnavailable __deprecated_msg("kFADErro
 static const FADErrorCode kFADErrorPlayerError = kFADErrorCodePlayerError;
 
 typedef enum: NSInteger {
-  kFADFormatInterstitialLandscape = 1, // until ver.20180420
-  kFADFormatInterstitialPortrait = 2,  // until ver.20180420
-  kFADFormatInFeed = 3,
-  kFADFormatBounce = 4,                // until ver.2.3.20200625
-  kFADFormatW320H180 = 5,
-  kFADFormatW300H250 = 6,              // not available
-  kFADFormatCustomLayout = 7,
-  kFADFormatVideoReward = 8            // use this for interstitial too since ver.20180601
-} FADFormat;
-
-typedef enum: NSInteger {
-  kFADStateNotLoaded = 1,
-  kFADStateLoading = 2,
-  kFADStateLoaded = 3,
-  // kFADStateShowing = 4,             // until ver.20190311
-  kFADStateClosed = 5,
-  kFADStateError = 6
-} FADState;
-
-typedef enum: NSInteger {
   kFADCreativeTypeNotLoaded = 0, // only returns when called before a successful load.
   kFADCreativeTypeMovie = 1,
   kFADCreativeTypeImage = 2,
@@ -97,9 +76,6 @@ typedef NS_ENUM (NSInteger, FADNeedChildDirectedTreatment) {
 #pragma clang diagnostic ignored "-Wnullability-completeness"
 
 static NSString* const kFADConfigAppIdKey = @"FIVE_APP_ID";
-
-/// :nodoc:
-static NSString* const kFADConfigAdFormatKey __deprecated_msg("This constant is no longer used since ver.2.4.20210903") = @"FIVE_AD_FORMATS";
 static NSString* const kFADConfigIsTestKey = @"FIVE_IS_TEST";
 
 #pragma mark - configuration object of FiveSDK.
@@ -137,24 +113,13 @@ static NSString* const kFADConfigIsTestKey = @"FIVE_IS_TEST";
 @property (nonatomic) BOOL isTest;
 
 @property (nonatomic, readonly) NSString* appId;
-@property (nonatomic) NSSet *fiveAdFormat __deprecated_msg("This field is no longer used since ver.20210903");
 
 @property (nonatomic) FADAdAgeRating maxAdAgeRating;
 @property (nonatomic) FADNeedGdprNonPersonalizedAdsTreatment needGdprNonPersonalizedAdsTreatment __deprecated_msg("needGdprNonPersonalizedAdsTreatment is no longer used since ver.2.9.20250507.");
 @property (nonatomic) FADNeedChildDirectedTreatment needChildDirectedTreatment;
 @end
 
-__deprecated_msg("FADMediaUserAttribute is deprecated since ver.2.4.20220216. We might delete this API in a future release.")
-@interface FADMediaUserAttribute : NSObject
-- (id)initWithKey:(NSString *)key value:(NSString *)value;
-@property (nonatomic,readonly) NSString *key;
-@property (nonatomic,readonly) NSString *value;
-@end
-
-
-/**
- * FiveSDK global settings.
- */
+__deprecated_msg("FADSettings is deprecated since ver.3.0.0. Use FADAdLoader instead. We might delete this API in a future release.")
 @interface FADSettings : NSObject
 /// :nodoc:
 - (id)init NS_UNAVAILABLE;
@@ -171,8 +136,6 @@ __deprecated_msg("FADMediaUserAttribute is deprecated since ver.2.4.20220216. We
 
 + (NSString *)version __deprecated_msg("version is deprecated since ver.2.7.20240318. Use semanticVersion instead.");
 + (NSString *)semanticVersion;
-
-+ (void)setMediaUserAttributes:(NSArray<FADMediaUserAttribute*> *)attributes __deprecated_msg("setMediaUserAttributes is deprecated since ver.2.4.20220216. We might delete this API in a future release.");
 
 + (void)enableSound:(BOOL)enabled __deprecated_msg("enableSound is deprecated since ver.2.4.20210903. use `-[FADConfig enableSoundByDefault:]` instead.");
 + (BOOL)isSoundEnabled __deprecated_msg("isSoundEnabled is deprecated since ver.2.4.20210903.");
@@ -195,21 +158,15 @@ __deprecated_msg("FADMediaUserAttribute is deprecated since ver.2.4.20220216. We
 /// This method registers a callback object for receiving the result of `-[FADAdInterface loadAdAsync]`.
 /// You MUST call this method before calling `-[FADAdInterface loadAdAsync]`.
 /// @param loadDelegate callback object. FiveSDK only saves the weak reference.
-- (void) setLoadDelegate:(id<FADLoadDelegate>)loadDelegate;
-
-/// This method registers a callback object for receiving ad events.
-/// You can receive several events such as impression, click, or view through.
-/// @param listener callback object. FiveSDK only saves the weak reference.
-- (void) setAdViewEventListener:(id<FADAdViewEventListener>)listener __deprecated_msg("setAdViewEventListener is deprecated since ver.2.7.20231115. We might delete this API in a future release.");
+- (void) setLoadDelegate:(id<FADLoadDelegate>)loadDelegate __deprecated_msg("setLoadDelegate is deprecated since ver.3.0.0. We might delete this API in a future release.");
 
 /// This method tries to load ad.
 /// The result is notified via `FADLoadDelegate`.
 /// You must register `FADLoadDelegate` by `-[FADAdInterface setLoadDelegate:]` before calling this method.
-- (void)loadAdAsync;
+- (void)loadAdAsync __deprecated_msg("loadAdAsync is deprecated since ver.3.0.0. Use FADAdLoader instead.");
 - (void)loadAdAsyncWithTimeoutInterval:(NSTimeInterval)timeout __deprecated_msg("loadAdAsyncWithTimeoutInterval is deprecated since ver.2.9.20241105. We might delete this API in a future release.");
 
 @property (nonatomic, readonly) NSString *slotId;
-@property (nonatomic, readonly) FADState state __deprecated_msg("state is deprecated since 2.8.20240612. We might delete this API in a future release.");
 @property (nonatomic, readonly) FADCreativeType creativeType;
 
 /// Media developer can use this property for distinguishing each ad object.
@@ -224,7 +181,7 @@ __deprecated_msg("FADMediaUserAttribute is deprecated since ver.2.4.20220216. We
 @interface FADInterstitial: NSObject<FADAdInterface>
 /// This method initializes `FADInterstitial` with the given slot id.
 /// @param slotId You should register an ad slot to our web system for generating your slot id. It must not be null.
-- (instancetype)initWithSlotId:(NSString *)slotId;
+- (instancetype)initWithSlotId:(NSString *)slotId __deprecated_msg("initWithSlotId is deprecated since ver.3.0.0. Use FADAdLoader.loadInterstitialAdWithConfig instead.");
 
 /// :nodoc:
 - (instancetype)init NS_UNAVAILABLE;
@@ -258,7 +215,7 @@ __deprecated_msg("FADMediaUserAttribute is deprecated since ver.2.4.20220216. We
 /// This method initializes `FADAdViewCustomLayout` with the given slot id.
 /// @param slotId You should register an ad slot to our web system for generating your slot id. It must not be null.
 /// @param width  The initial width of ad view. The aspect ratio of an ad view is managed in our web system.
-- (instancetype)initWithSlotId:(NSString *)slotId width:(float)width;
+- (instancetype)initWithSlotId:(NSString *)slotId width:(float)width __deprecated_msg("initWithSlotId:width: is deprecated since ver.3.0.0. Use FADAdLoader.loadBannerAdWithConfig instead.");;
 
 /// :nodoc:
 - (instancetype)init NS_UNAVAILABLE;
@@ -269,7 +226,7 @@ __deprecated_msg("FADMediaUserAttribute is deprecated since ver.2.4.20220216. We
 
 /// Only available after the ad is successfully loaded.
 /// This may returns empty string i.e. @""
-- (NSString *)getAdvertiserName;
+- (NSString *)getAdvertiserName __deprecated_msg("getAdvertiserName is deprecated since ver.3.0.0. We might delete this API in a future release.");
 
 #pragma clang diagnostic pop  // ignored "-Wnullability-completeness"
 
@@ -290,7 +247,7 @@ __deprecated_msg("FADMediaUserAttribute is deprecated since ver.2.4.20220216. We
 @interface FADVideoReward: NSObject<FADAdInterface>
 /// This method initializes `FADVideoReward` with the given slot id.
 /// @param slotId You should register an ad slot to our web system for generating your slot id. It must not be null.
-- (instancetype)initWithSlotId:(NSString *)slotId;
+- (instancetype)initWithSlotId:(NSString *)slotId __deprecated_msg("initWithSlotId is deprecated since ver.3.0.0. Use FADAdLoader.loadRewardAdWithConfig instead.");
 
 /// :nodoc:
 - (instancetype)init NS_UNAVAILABLE;
@@ -313,7 +270,7 @@ __deprecated_msg("FADMediaUserAttribute is deprecated since ver.2.4.20220216. We
 @end
 
 @interface FADNative: NSObject<FADAdInterface>
-- (instancetype)initWithSlotId:(NSString *)slotId videoViewWidth:(float)videoViewWidth;
+- (instancetype)initWithSlotId:(NSString *)slotId videoViewWidth:(float)videoViewWidth __deprecated_msg("initWithSlotId:videoViewWidth: is deprecated since ver.3.0.0. Use FADAdLoader.loadNativeAdWithConfig instead.");
 
 /// :nodoc:
 - (instancetype)init NS_UNAVAILABLE;
@@ -328,7 +285,7 @@ __deprecated_msg("FADMediaUserAttribute is deprecated since ver.2.4.20220216. We
 
 // return values are non-nil, but NSString may be empty string i.e. @""
 - (NSString*)getButtonText;
-- (NSString*)getDescriptionText;
+- (NSString*)getDescriptionText __deprecated_msg("getDescriptionText is deprecated since ver.3.0.0. Use getLongDescriptionText or getAdTitle instead.");
 - (NSString*)getLongDescriptionText;
 - (NSString*)getAdvertiserName;
 - (NSString*)getAdTitle;
@@ -347,25 +304,10 @@ __deprecated_msg("FADMediaUserAttribute is deprecated since ver.2.4.20220216. We
 
 #pragma mark - delegates
 
+__deprecated_msg("FADLoadDelegate is deprecated since ver.3.0.0. We might delete this API in a future release.")
 @protocol FADLoadDelegate <NSObject>
 - (void) fiveAdDidLoad:(id<FADAdInterface>)ad;
 - (void) fiveAd:(id<FADAdInterface>)ad didFailedToReceiveAdWithError:(FADErrorCode) errorCode;
-@end
-
-__deprecated_msg("FADAdViewEventListener is deprecated since ver.2.7.20231115. We might delete this API in a future release.")
-@protocol FADAdViewEventListener <NSObject>
-@optional
-- (void) fiveAdDidClick:(id<FADAdInterface>)ad;
-- (void) fiveAdDidClose:(id<FADAdInterface>)ad;
-- (void) fiveAdDidStart:(id<FADAdInterface>)ad;
-- (void) fiveAdDidPause:(id<FADAdInterface>)ad;
-- (void) fiveAdDidResume:(id<FADAdInterface>)ad;
-- (void) fiveAdDidViewThrough:(id<FADAdInterface>)ad;
-- (void) fiveAdDidReplay:(id<FADAdInterface>)ad;
-- (void) fiveAdDidStall:(id<FADAdInterface>)ad;
-- (void) fiveAdDidRecover:(id<FADAdInterface>)ad;
-- (void) fiveAdDidImpression:(id<FADAdInterface>)ad;
-- (void) fiveAd:(id<FADAdInterface>)ad didFailedToShowAdWithError:(FADErrorCode) errorCode;
 @end
 
 #pragma clang diagnostic pop  // ignored "-Wnullability-completeness"
@@ -444,7 +386,7 @@ __deprecated_msg("FADAdViewEventListener is deprecated since ver.2.7.20231115. W
 @end
 
 /**
- * [BETA] Core API for FiveSDK version 3.*
+ * Core API for FiveSDK version 3.*
  */
 @interface FADAdLoader : NSObject
 + (nonnull NSString*) semanticVersion;
